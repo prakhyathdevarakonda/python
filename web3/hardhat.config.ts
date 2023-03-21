@@ -18,13 +18,14 @@ export default {
       viaIR: true,
       optimizer: {
         enabled: true,
-        runs: 100,
+        runs: 200,
       },
     },
   },
   networks: {
     fuji: {
       url: 'https://api.avax-test.network/ext/bc/C/rpc',
+      gas: 6000000,
       gasPrice: 225000000000,
       chainId: 43113,
       accounts: [process.env.PRIVATE_KEY],
