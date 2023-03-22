@@ -1,12 +1,15 @@
-import React ,{useState} from 'react';
+import React ,{useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom'
 import { PageHOC,CustomInput, CustomButton } from '../components';
 import { useGlobalContext} from '../context';
 const Home = () => {
   const {contract,walletAddress,setShowAlert} = useGlobalContext();
   const [playerName,setPlayerName] = useState('');
-  
+  const navigate=useNavigate();
+
   const handleClick = async () => {
     try {
+      // console.log({contract})
       const playerExists = await contract.isPlayer(walletAddress);
 
       if (!playerExists) {
@@ -22,14 +25,23 @@ const Home = () => {
       }
     } catch (error) {
       setShowAlert({
-        status: 'true',
-        type: "error",
-        message: error.message
+        status: true,
+        type: "failure",
+        message: "Something went wrong!"
       })
-      console.log(error);
-      alert(error);
     }
   };
+
+  useEffect(() => {
+    const createPlayerToken = async () => {
+      const playerExists = await contract.isPlayer(walletAddress);
+      const playerTokenExists = await contract.isPlayerToken(walletAddress);
+
+      if (playerExists && playerTokenExists) navigate('/create-battle');
+    };
+
+    if (contract) createPlayerToken();
+  }, [contract]);
 
 
   return (
@@ -39,7 +51,7 @@ const Home = () => {
       placeHolder="Enter your player name"
       value ={playerName}
       handleValueChange={setPlayerName}
-      />   
+      />
         <CustomButton
           title="Register"
           handleClick={handleClick}

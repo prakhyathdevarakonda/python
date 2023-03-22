@@ -59,6 +59,10 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
         address winner; /// @param winner winner address
     }
 
+    struct return_of_playerinfo{
+        uint256 random;
+    }
+
     mapping(address => uint256) public playerInfo; // Mapping of player addresses to player index in the players array
     mapping(address => uint256) public playerTokenInfo; // Mapping of player addresses to player token index in the gameTokens array
     mapping(string => uint256) public battleInfo; // Mapping of battle name to battle index in the battles array
@@ -75,7 +79,31 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
         }
     }
 
+    function temp20(address addr) public view returns (Player memory) {
+        // console.log("player address is = ");
+        // console.log(addr);
+        // require(isPlayer(addr), "Player doesn't exist!");
+        return players[playerInfo[addr]];
+    }
+
+    function temp22(address addr) public view returns (address) {
+        address temp=addr;
+            return temp;
+        }
+    
+    function temp_returns_playerinfo(address addr) public view returns (uint) {
+        uint temp=playerInfo[addr];
+            return temp;
+        }
+
+    function temp_returns_playertokeninfo(address addr) public view returns (uint) {
+        uint temp=playerTokenInfo[addr];
+            return temp;
+        }
+
     function getPlayer(address addr) public view returns (Player memory) {
+        // console.log("player address is = ");
+        // console.log(addr);
         require(isPlayer(addr), "Player doesn't exist!");
         return players[playerInfo[addr]];
     }
@@ -90,6 +118,15 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
         } else {
             return true;
         }
+    }
+
+     function temp21(address addr)
+        public
+        view
+        returns (GameToken memory)
+    {
+        // require(isPlayerToken(addr), "Game token doesn't exist!");
+        return gameTokens[playerTokenInfo[addr]];
     }
 
     function getPlayerToken(address addr)
@@ -314,7 +351,7 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
             _battle.players[0] != msg.sender,
             "Only player two can join a battle"
         ); // Require that player 2 is joining the battle
-        require(!getPlayer(msg.sender).inBattle, "Already in battle"); // Require that player is not already in a battle
+        // require(!getPlayer(msg.sender).inBattle, "Already in battle"); // Require that player is not already in a battle
 
         _battle.battleStatus = BattleStatus.STARTED;
         _battle.players[1] = msg.sender;
