@@ -16,19 +16,26 @@ export const GlobalContextProvider = ({ children }) =>{
     const [battleName, setBattleName] = useState('');
     const [gameData, setGameData] = useState({ players: [], pendingBattles: [], activeBattle: null });
     const [updateGameData, setUpdateGameData] = useState(0);
+    const [battleGround, setBattleGround] = useState('bg-astral');
 
 
     const navigate = useNavigate();
     const updateCurrentWalletAddress = async () => {
-      const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
-    
-        if (accounts)
+      const accounts = await window?.ethereum?.request({ method: 'eth_accounts' });
+        if (accounts){
           setWalletAddress(accounts[0]);
+        }
+        updateCurrentWalletAddress()
+        // console.log(accounts[0]);
       };
+
+
       useEffect(() => {
-        updateCurrentWalletAddress();
+        const timer= setTimeout(() => updateCurrentWalletAddress(),1000);
+        // return () => clearTimeout(timer);
     
         window.ethereum.on('accountsChanged', updateCurrentWalletAddress);
+        return () => clearTimeout(timer);
       }, []);
     
       //* Set the smart contract and provider to the state
@@ -59,9 +66,9 @@ export const GlobalContextProvider = ({ children }) =>{
         walletAddress,
         setShowAlert,
         setUpdateGameData,
-      });
+      })
     }
-  }, [contract]);
+  }, [contract])
 
       useEffect(() => {
         if (showAlert?.status) {
@@ -77,7 +84,9 @@ export const GlobalContextProvider = ({ children }) =>{
   useEffect(() => {
     const fetchGameData = async () => {
         const fetchedBattles = await contract.getAllBattles();
+        // console.log(`fetch game data is = ${fetchedBattles}`);
         const pendingBattles = fetchedBattles.filter((battle) => battle.battleStatus === 0);
+        // console.log(`pending battles game data is = ${pendingBattles}`);
         let activeBattle = null;
 
         fetchedBattles.forEach((battle) => {
@@ -88,7 +97,7 @@ export const GlobalContextProvider = ({ children }) =>{
           }
         });
 
-        setGameData({ pendingBattles: pendingBattles.slice(1), activeBattle });
+        setGameData({pendingBattles: pendingBattles.slice(1), activeBattle });
     };
 
     if(contract) fetchGameData();
@@ -104,6 +113,8 @@ export const GlobalContextProvider = ({ children }) =>{
             battleName,
             setBattleName,
             gameData,
+            // updateCurrentWalletAddress,
+            battleGround,setBattleGround
         }}
         >
             {children}

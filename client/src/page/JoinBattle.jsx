@@ -13,7 +13,10 @@ const JoinBattle = () => {
       setBattleName(battleName);
   
       try {
+        // console.log(contract)
+        // console.log(battleName)
         await contract.joinBattle(battleName);
+        // console.log("temp")
   
         setShowAlert({ status: true, type: 'success', message: `Joining ${battleName}` });
       } catch (error) {
@@ -27,6 +30,7 @@ const JoinBattle = () => {
         <h2 className={styles.joinHeadText}>Available Battles:</h2>
 
         <div className={styles.joinContainer}>
+        {console.log(gameData)}
         {gameData.pendingBattles.length
           ? gameData.pendingBattles
             .filter((battle) => !battle.players.includes(walletAddress) && battle.battleStatus !== 1)
