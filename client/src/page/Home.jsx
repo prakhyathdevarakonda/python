@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom'
 import { PageHOC,CustomInput, CustomButton } from '../components';
 import { useGlobalContext} from '../context';
 const Home = () => {
-  const {contract,walletAddress,setShowAlert} = useGlobalContext();
+  const {contract,walletAddress,setShowAlert,gameData} = useGlobalContext();
   const [playerName,setPlayerName] = useState('');
   const navigate=useNavigate();
 
@@ -42,6 +42,12 @@ const Home = () => {
 
     if (contract) createPlayerToken();
   }, [contract]);
+
+  useEffect(() => {
+    if (gameData.activeBattle) {
+      navigate(`/battle/${gameData.activeBattle.name}`);
+    }
+  }, [gameData]);
 
 
   return (
