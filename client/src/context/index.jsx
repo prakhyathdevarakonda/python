@@ -17,9 +17,39 @@ export const GlobalContextProvider = ({ children }) =>{
     const [gameData, setGameData] = useState({ players: [], pendingBattles: [], activeBattle: null });
     const [updateGameData, setUpdateGameData] = useState(0);
     const [battleGround, setBattleGround] = useState('bg-astral');
+    const [step, setStep] = useState(1);
+    const [errorMessage, setErrorMessage] = useState('');
 
+    const player1Ref = useRef();
+    const player2Ref = useRef();
 
     const navigate = useNavigate();
+
+    useEffect(()=>{
+      const battlegroundFromLocalStorage = localStorage.getItem('battleground');
+
+      if(battlegroundFromLocalStorage){
+        setBattleGround(battlegroundFromLocalStorage);
+      }
+      else{
+        localStorage.setItem('battleground',battleGround)
+      }
+    },[])
+
+    useEffect(() => {
+      const resetParams = async () => {
+        const currentStep = await GetParams();
+  
+        setStep(currentStep.step);
+      };
+  
+      resetParams();
+  
+      window?.ethereum?.on('chainChanged', () => resetParams());
+      window?.ethereum?.on('accountsChanged', () => resetParams());
+    }, []);
+
+
     const updateCurrentWalletAddress = async () => {
       const accounts = await window?.ethereum?.request({ method: 'eth_accounts' });
         if (accounts){
@@ -58,7 +88,7 @@ export const GlobalContextProvider = ({ children }) =>{
 
        //* Activate event listeners for the smart contract
   useEffect(() => {
-    if (contract) {
+    if (step !== -1 && contract) {
       createEventListeners({
         navigate,
         contract,
@@ -66,9 +96,10 @@ export const GlobalContextProvider = ({ children }) =>{
         walletAddress,
         setShowAlert,
         setUpdateGameData,
+        player1Ref,player2Ref,
       })
     }
-  }, [contract])
+  }, [contract,step])
 
       useEffect(() => {
         if (showAlert?.status) {
@@ -79,6 +110,21 @@ export const GlobalContextProvider = ({ children }) =>{
           return () => clearTimeout(timer);
         }
       }, [showAlert]);
+
+ //* Handle error messages
+ useEffect(() => {
+    if (errorMessage) {
+      const parsedErrorMessage = errorMessage?.reason?.slice('execution reverted: '.length).slice(0, -1);
+
+      if (parsedErrorMessage) {
+        setShowAlert({
+          status: true,
+          type: 'failure',
+          message: parsedErrorMessage,
+        });
+      }
+    }
+  }, [errorMessage]);
 
       //* Set the game data to the state
   useEffect(() => {
@@ -113,8 +159,10 @@ export const GlobalContextProvider = ({ children }) =>{
             battleName,
             setBattleName,
             gameData,
-            // updateCurrentWalletAddress,
-            battleGround,setBattleGround
+            updateCurrentWalletAddress,
+            battleGround,setBattleGround,
+            errorMessage,setErrorMessage,
+            player1Ref,player2Ref,
         }}
         >
             {children}

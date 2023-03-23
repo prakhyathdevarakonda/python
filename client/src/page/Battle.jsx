@@ -8,7 +8,7 @@ import { attack, attackSound, defense, defenseSound, player01 as player01Icon, p
 import { playAudio } from '../utils/animation.js';
 
 const Battle = () => {
-  const { contract, gameData, walletAddress, showAlert, setShowAlert,battleGround } = useGlobalContext();
+  const { contract, gameData, walletAddress, showAlert, setShowAlert,battleGround ,setErrorMessage,player1Ref,player2Ref} = useGlobalContext();
   const [player2, setPlayer2] = useState({});
   const [player1, setPlayer1] = useState({});
   const { battleName } = useParams();
@@ -32,9 +32,7 @@ const Battle = () => {
 
 
         const p1TokenData = await contract.getPlayerToken(player01Address);
-        // console.log(`p1tokendata is = ${p1TokenData}`);
         const player01 = await contract.getPlayer(player01Address);
-        // console.log("temp20")
         const player02 = await contract.getPlayer(player02Address);
 
 
@@ -56,6 +54,31 @@ const Battle = () => {
     if (contract && gameData.activeBattle) getPlayerInfo();
   }, [contract, gameData, battleName]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!gameData?.activeBattle) navigate('/');
+    }, [2000]);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const makeAMove = async (choice) => {
+    playAudio(choice === 1 ? attackSound : defenseSound);
+
+    try {
+      await contract.attackOrDefendChoice(choice, battleName, { gasLimit: 200000 });
+
+      setShowAlert({
+        status: true,
+        type: 'info',
+        message: `Initiating ${choice === 1 ? 'attack' : 'defense'}`,
+      });
+    } catch (error) {
+      setErrorMessage(error);
+      // console.log(error);
+    }
+  };
+
 
   return (
     <div className={`${styles.flexBetween} ${styles.gameContainer} ${battleGround}`}>
@@ -67,27 +90,27 @@ const Battle = () => {
         <Card
           card={player2}
           title={player2?.playerName}
-          cardRef=''
+          cardRef={player2Ref}
           playerTwo
         />
 
         <div className="flex items-center flex-row">
           <ActionButton
             imgUrl={attack}
-            handleClick={() => {}}
+            handleClick={() => makeAMove(1)}
             restStyles="mr-2 hover:border-yellow-400"
           />
 
           <Card
             card={player1}
             title={player1?.playerName}
-            cardRef=''
-            restStyles="mt-3"
+            cardRef={player1Ref}
+            restStyles="mt-7"
           />
 
           <ActionButton
             imgUrl={defense}
-            handleClick={() => {}}
+            handleClick={() => makeAMove(2)}
             restStyles="ml-6 hover:border-red-600"
           />
         </div>
