@@ -29,7 +29,6 @@ export const createEventListeners = ({navigate,contract,provider,walletAddress,s
     const NewPlayerEventFilter = contract.filters.NewPlayer();
     AddNewEvent(NewPlayerEventFilter, provider, ({ args }) => {
       console.log('New player created!', args);
-  
       if (walletAddress === args.owner) {
         setShowAlert({
           status: true,
@@ -43,7 +42,6 @@ export const createEventListeners = ({navigate,contract,provider,walletAddress,s
     const NewBattleEventFilter = contract.filters.NewBattle();
     AddNewEvent(NewBattleEventFilter, provider, ({ args }) => {
       console.log('New battle started!', args, walletAddress);
-  
       if (walletAddress.toLowerCase() === args.player1.toLowerCase() || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
         navigate(`/battle/${args.battleName}`);
       }
@@ -94,12 +92,11 @@ const BattleEndedEventFilter = contract.filters.BattleEnded();
 AddNewEvent(BattleEndedEventFilter, provider, ({ args }) => {
   if (walletAddress.toLowerCase() === args.winner.toLowerCase()) {
     setShowAlert({ status: true, type: 'success', message: 'You won!' });
+    navigate('/create-battle');
   } else if (walletAddress.toLowerCase() === args.loser.toLowerCase()) {
     setShowAlert({ status: true, type: 'failure', message: 'You lost!' });
+    navigate('/create-battle');
   }
-
-  navigate('/create-battle');
 });
-
 
 }
