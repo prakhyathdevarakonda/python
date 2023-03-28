@@ -38,7 +38,8 @@ import widowmaker from './Widowmaker.png';
 import xho from './Xho.png';
 
 // logo
-import logo from './logo.svg';
+import logo from './logo.png';
+// import logo2 from './logo2.png';
 
 // icon
 import attack from './attack.png';
@@ -127,6 +128,7 @@ export {
   xho,
 
   logo,
+  // logo2,
 
   attack,
   defense,

@@ -27,8 +27,8 @@ const Battle = () => {
           player01Address = gameData.activeBattle.players[1];
           player02Address = gameData.activeBattle.players[0];
         }
-        console.log(` player01address is = ${player01Address}`)
-        console.log(` player02address is = ${player02Address}`)
+        // console.log(` player01address is = ${player01Address}`)
+        // console.log(` player02address is = ${player02Address}`)
 
 
         const p1TokenData = await contract.getPlayerToken(player01Address);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGlobalContext } from '../context';
-import { logo, heroImg } from '../assets';
+import { logo,heroImg } from '../assets';
 import styles from '../styles';
 import Alert from './Alert';
 
@@ -25,7 +25,7 @@ const { showAlert } = useGlobalContext();
           <Component />
         </div>
 
-        <p className={styles.footerText}>Made with 💜 by JavaScript Mastery</p>
+        <p className={styles.footerText}>Made by Nitish Prakhyath & Sonika</p>
       </div>
 
       <div className="flex flex-1">
